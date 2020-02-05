@@ -1,43 +1,32 @@
-const {format} = require('util');
-const Multer = require('multer');
-const {Storage} = require('@google-cloud/storage');
-
-const storage = new Storage({
-    bucket: "suridatabase1",
+const {BigQuery} = require('@google-cloud/bigquery');
+module.exports = async (logged) => {
+  const bigquery = new BigQuery({
     projectId: "suridatabase-251912",
     keyFilename: "./src/key.json",
-});
+  });
 
-const multer = Multer({
-    storage: Multer.memoryStorage(),
-    limits: {
-      fileSize: 5 * 1024 * 1024,
-    },
-  });
-  
-  const bucket = storage.bucket("suridatabase1");
-  
-  app.post('/upload', multer.single('file'), (req, res, next) => {
-    if (!req.file) {
-      res.status(400).send('No file uploaded.');
-      return;
-    }
-  
-    // Create a new blob in the bucket and upload the file data.
-    const blob = bucket.file(req.file.originalname);
-    const blobStream = blob.createWriteStream();
-  
-    blobStream.on('error', err => {
-      next(err);
-    });
-  
-    blobStream.on('finish', () => {
-      // The public URL can be used to directly access the file via HTTP.
-      const publicUrl = format(
-        `https://storage.googleapis.com/${bucket.name}/${blob.name}`
-      );
-      res.status(200).send(publicUrl);
-    });
-  
-    blobStream.end(req.file.buffer);
-  });
+  await logged.forEach(session => {
+    const { name } = session.user.dataValues;
+    const { id, initial, final, date_log, user_id } = session;
+    
+    let verifyToken = `
+    SELECT * 
+    FROM ${process.env.BQ_TABLE} 
+    where id = "${id}"`;
+    
+    let query = `
+    INSERT INTO ${process.env.BQ_TABLE} (id, initial, final, date_log, user_id, user_name) 
+    VALUES 
+    ("'${id}","${initial}","${final}","${date_log}","${user_id}","${name}")`;
+    
+    bigquery.query(verifyToken)
+    .then(function(data) {
+      const rows = data[0];      
+      
+      if((rows) == false){
+        bigquery.query(query);
+      }
+    })
+    .catch(err => console.log(err));
+    }); 
+}
