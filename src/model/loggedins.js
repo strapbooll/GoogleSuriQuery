@@ -9,6 +9,9 @@ var Logged = db.define('logged_ins', {
   final: {
     type: sequelize.STRING,
   },
+  total: {
+    type: sequelize.STRING,
+  },
   date_log: {
     type: sequelize.DATE,
   },
@@ -19,24 +22,20 @@ var Logged = db.define('logged_ins', {
       model: 'user',
       referenceKey: 'user_id',
     },
-  },  
+  },
+  company_id: {
+    type: sequelize.INTEGER,
+    allowNull: false,
+    references:{
+      model: 'company',
+      referenceKey: 'company_id',
+    },
+  },
 }, {
   underscored: true,
   sequelize,
   timestamps:false
 }); 
-var Users = db.define('users', {
-  name: {
-    type: sequelize.STRING,
-  },
-},{
-  underscored: true,
-  sequelize,
-  modelName: 'user',
-  timestamps:false
-});
-
-Logged.belongsTo(Users);
 module.exports = {db, Logged};
 
 
