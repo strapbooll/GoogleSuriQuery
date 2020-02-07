@@ -38,12 +38,12 @@ module.exports = async (logged) => {
       let query = `
       INSERT INTO ${process.env.BQ_TABLE} (id, initial, final, total,date_log, user_id, user_name, user_type,health_id, health_name, company_id, company_name) 
       VALUES 
-      ("${id}","${initial}","${final}","${total}","${date_log}","${user_id}","${user_name}","${user_type}","${health_id}","${heath_name}","${company_id}","${company_name}")`;
+      ("${id}","${initial}","${final}","${total}","${date_log}", "${user_id}","${user_name}", "${user_type}", "${health_id}", "${heath_name}", "${company_id}", "${company_name}")`;
       
       bigquery.query(verifyToken)
-      .then(function(data) {
-        const rows = data[0];      
-        if((rows) == false){          
+      .then(function(data) {        
+        const rows = data[0];   
+        if((rows) == false){     
           bigquery.query(query);
         }
       })
