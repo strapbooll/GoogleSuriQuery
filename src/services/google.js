@@ -1,7 +1,7 @@
 const {BigQuery} = require('@google-cloud/bigquery');
 module.exports = async (logged) => {
   const bigquery = new BigQuery({
-    projectId: "suridatabase-251912",
+    projectId: process.env.GG_ID_PROJECT,
     keyFilename: "./src/key.json",
   });
 

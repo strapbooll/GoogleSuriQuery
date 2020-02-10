@@ -1,4 +1,4 @@
 /node_modules
 .vscode/
 .env
-key.json
+src/key.json
