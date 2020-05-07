@@ -1,0 +1,15 @@
+CREATE TABLE `suriportal.API.BaseTempoLogado`( 
+id STRING,
+initial STRING,
+final STRING,
+total STRING,
+date_log DATE,
+user_id STRING,
+user_name STRING,
+user_type STRING,
+health_id STRING,
+health_name STRING,
+company_id STRING,
+company_name STRING,
+company_nickname STRING,
+);
